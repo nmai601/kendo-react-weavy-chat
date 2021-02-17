@@ -7,25 +7,23 @@ const Conversation = (props) => {
     const [messages, setMessages] = useState([]);
     const proxy = useContext(ConnectionContext);
     const messagesRef = useRef();
-
-messagesRef.current = messages;
+    messagesRef.current = messages;
 
     useEffect(() => {
-        if(!proxy) return;
+        if (!proxy) return;
         proxy.on('eventReceived', (type, data) => {
-            switch(type){
-                case "message-inserted.weavy": 
+            switch (type) {
+                case "message-inserted.weavy":
                     let json = JSON.parse(data);
-                    if(json.createdBy.id !== props.user.id){
+                    if (json.createdBy.id !== props.user.id) {
                         setMessages([...messagesRef.current, {
                             text: json.text,
                             timestamp: new Date(json.createdAt),
                             author: { id: json.createdBy.id, name: json.createdBy.name }
                         }]);
-                    }                    
-                    
+                    }
                     break;
-                default: 
+                default:
             }
         });
     }, [proxy])

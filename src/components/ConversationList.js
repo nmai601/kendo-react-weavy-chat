@@ -3,21 +3,20 @@ import { ListView, } from '@progress/kendo-react-listview';
 import { Avatar } from '@progress/kendo-react-layout';
 import { API_URL, API_TOKEN } from '../constants';
 import AuthImage from './AuthImage';
-import {ConnectionContext} from '../connection-context';
+import { ConnectionContext } from '../connection-context';
 
 const ConversationList = (conversationProps) => {
     const [conversations, setConversations] = useState([]);
     const [currentConversation, setCurrentConversation] = useState(null);
     const conversationsRef = useRef();
     const proxy = useContext(ConnectionContext);
-
     conversationsRef.current = conversations;
 
     useEffect(() => {
-        if(!proxy) return;
+        if (!proxy) return;
         proxy.on('eventReceived', (type, data) => {
-            switch(type){
-                case "message-inserted.weavy": 
+            switch (type) {
+                case "message-inserted.weavy":
                     messageReceived(data);
                     break;
                 default:
@@ -25,13 +24,13 @@ const ConversationList = (conversationProps) => {
         });
     }, [proxy])
 
-    const messageReceived = (data) => {        
+    const messageReceived = (data) => {
         let d = JSON.parse(data);
-        let conversationId = d.conversation;        
-        let c = conversationsRef.current.find((c) => {return c.id === conversationId});
-        if(c){                        
+        let conversationId = d.conversation;
+        let c = conversationsRef.current.find((c) => { return c.id === conversationId });
+        if (c) {
             c.last_message.text = d.text;
-            c.is_read = false;            
+            c.is_read = false;
             setConversations([...conversationsRef.current])
         }
     };
@@ -50,9 +49,9 @@ const ConversationList = (conversationProps) => {
         let item = props.dataItem;
         let title = (item.is_room ?? false) ? item.name : (item.members.filter((m) => { return m.id !== conversationProps.user.id })[0].name)
         let message = item.last_message != null ? item.last_message.text.substring(0, 50) : '';
-        
+
         return (
-            <div className={'row conversation-list-item ' + (currentConversation === item.id ? 'selected ' : ' ') + (!item.is_read ? 'unread': '')} style={{ margin: 0 }} onClick={handleConversationClick.bind(this, item.id)}>
+            <div className={'row conversation-list-item ' + (currentConversation === item.id ? 'selected ' : ' ') + (!item.is_read ? 'unread' : '')} style={{ margin: 0 }} onClick={handleConversationClick.bind(this, item.id)}>
                 <div className="col-1">
                     <Avatar shape='circle' type='image'>
                         <AuthImage src={`${API_URL}${item.thumb.replace('{options}', '92')}`} />
@@ -65,7 +64,6 @@ const ConversationList = (conversationProps) => {
                     <div>
                         <small>{message}</small>
                     </div>
-
                 </div>
             </div>
         )
@@ -81,7 +79,7 @@ const ConversationList = (conversationProps) => {
             },
         })
             .then(res => res.json())
-            .then((r) => {                
+            .then((r) => {
                 var sorted = sortByCreated(r);
                 setConversations(sorted);
                 handleConversationClick(sorted[0].id)

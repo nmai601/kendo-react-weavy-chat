@@ -1,13 +1,11 @@
-//import logo from './logo.svg';
-import React, { useState, useEffect } from 'react';
 import './App.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import '@progress/kendo-theme-bootstrap/dist/all.css';
+import React, { useState, useEffect } from 'react';
 import { API_URL, API_TOKEN } from './constants';
 import Conversation from './components/Conversation';
 import ConversationList from './components/ConversationList';
 import Loading from './components/Loading';
-
 import ConnectionProvider from './connection-provider';
 
 const App = () => {
@@ -49,12 +47,6 @@ const App = () => {
         </div>
       </div>
     </ConnectionProvider>
-
-
-
-
   );
 }
-
-
 export default App;

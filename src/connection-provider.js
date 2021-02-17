@@ -11,7 +11,7 @@ const ConnectionProvider = (props) => {
         const connection = hubConnection(API_URL, { qs: { Bearer: API_TOKEN } });
         const hubProxy = connection.createHubProxy('rtm');
         setProxy(hubProxy);
-        hubProxy.on('init', (type, data) => {});
+        hubProxy.on('init', (type, data) => {}); // dummy event to get signalR started...
 
         if (connection) {
             connection.start();
