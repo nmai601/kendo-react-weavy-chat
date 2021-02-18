@@ -4,6 +4,10 @@ A demo project showcasing Kendo UI React Conversational UI component backed by W
 ## Available Scripts
 In the project directory, you can run:
 
+### `yarn`
+
+Adds all packages needed to run the project
+
 ### `yarn start`
 
 Runs the app in the development mode.\

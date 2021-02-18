@@ -11,8 +11,14 @@ body {
   .row, .k-chat{
     margin: 0 !important
   }
+
   .conversation-list-item{
     cursor: pointer;
+    padding: 5px;
+  }
+
+  .conversation-list-item .col-1{
+    
     padding: 5px;
   }
   
