@@ -36,7 +36,7 @@ const App = () => {
 
   return (
     <ConnectionProvider>
-      <div className="App">
+      <div>
         <div className="row">
           <div className="col-4">
             <ConversationList onSelectConversation={setCurrentConversation} user={user} />

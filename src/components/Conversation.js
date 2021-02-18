@@ -11,15 +11,19 @@ const Conversation = (props) => {
 
     useEffect(() => {
         if (!proxy) return;
+
+         // add event handler for message inserted. Triggered from server when a new message is added to one of the users conversations
         proxy.on('eventReceived', (type, data) => {
             switch (type) {
                 case "message-inserted.weavy":
-                    let json = JSON.parse(data);
-                    if (json.createdBy.id !== props.user.id) {
+                    let message = JSON.parse(data);
+                    if (message.createdBy.id !== props.user.id) {
+
+                        // add incoming message to messages list
                         setMessages([...messagesRef.current, {
-                            text: json.text,
-                            timestamp: new Date(json.createdAt),
-                            author: { id: json.createdBy.id, name: json.createdBy.name }
+                            text: message.text,
+                            timestamp: new Date(message.createdAt),
+                            author: { id: message.createdBy.id, name: message.createdBy.name }
                         }]);
                     }
                     break;
@@ -32,6 +36,7 @@ const Conversation = (props) => {
 
         if (!props.conversationid) return;
 
+        // get the messages for the current conversation
         fetch(API_URL + '/api/conversations/' + props.conversationid + '/messages', {
             method: 'GET',
             headers: {
@@ -51,8 +56,12 @@ const Conversation = (props) => {
             });
     }, [props.conversationid]);
 
+    // add new message handler
     const addNewMessage = (event) => {
+        // add message
         setMessages([...messages, event.message]);
+        
+        // create new message model
         let json = JSON.stringify({ text: event.message.text });
         fetch(API_URL + '/api/conversations/' + props.conversationid + '/messages', {
             method: 'POST',
