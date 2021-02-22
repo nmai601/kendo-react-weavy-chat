@@ -7,10 +7,13 @@ const Conversation = (props) => {
     const [messages, setMessages] = useState([]);
     const proxy = useContext(ConnectionContext);
     const messagesRef = useRef();
+    const conversationRef = useRef();
     messagesRef.current = messages;
+    conversationRef.current = props.conversationId
 
     useEffect(() => {
         if (!proxy) return;
+<<<<<<< HEAD
 
          // add event handler for message inserted. Triggered from server when a new message is added to one of the users conversations
         proxy.on('eventReceived', (type, data) => {
@@ -20,6 +23,15 @@ const Conversation = (props) => {
                     if (message.createdBy.id !== props.user.id) {
 
                         // add incoming message to messages list
+=======
+        console.log("Adding handler")
+        proxy.on('eventReceived', (type, data) => {
+            switch (type) {
+                case "message-inserted.weavy":
+                    let json = JSON.parse(data);
+                    console.log("Message received in conversation ...", json)
+                    if (json.createdBy.id !== props.user.id && conversationRef.current == json.conversation) {
+>>>>>>> 349bf81b7ae2485684ae092055383e003ea86825
                         setMessages([...messagesRef.current, {
                             text: message.text,
                             timestamp: new Date(message.createdAt),
@@ -34,10 +46,14 @@ const Conversation = (props) => {
 
     useEffect(() => {
 
-        if (!props.conversationid) return;
+        if (!props.conversationId) return;
 
+<<<<<<< HEAD
         // get the messages for the current conversation
         fetch(API_URL + '/api/conversations/' + props.conversationid + '/messages', {
+=======
+        fetch(API_URL + '/api/conversations/' + props.conversationId + '/messages', {
+>>>>>>> 349bf81b7ae2485684ae092055383e003ea86825
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -54,7 +70,7 @@ const Conversation = (props) => {
                     }
                 }));
             });
-    }, [props.conversationid]);
+    }, [props.conversationId]);
 
     // add new message handler
     const addNewMessage = (event) => {
@@ -63,7 +79,7 @@ const Conversation = (props) => {
         
         // create new message model
         let json = JSON.stringify({ text: event.message.text });
-        fetch(API_URL + '/api/conversations/' + props.conversationid + '/messages', {
+        fetch(API_URL + '/api/conversations/' + props.conversationId + '/messages', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

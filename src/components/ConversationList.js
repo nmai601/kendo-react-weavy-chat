@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
-import { ListView, } from '@progress/kendo-react-listview';
 import { Avatar } from '@progress/kendo-react-layout';
 import { API_URL, API_TOKEN } from '../constants';
 import AuthImage from './AuthImage';
@@ -11,11 +10,16 @@ const ConversationList = (conversationProps) => {
     const conversationsRef = useRef();
     const proxy = useContext(ConnectionContext);
     conversationsRef.current = conversations;
-
+    
     useEffect(() => {
+        
         if (!proxy) return;
+<<<<<<< HEAD
 
         // add event handler for message inserted. Triggered from server when a new message is added to one of the users conversations
+=======
+    
+>>>>>>> 349bf81b7ae2485684ae092055383e003ea86825
         proxy.on('eventReceived', (type, data) => {
             switch (type) {
                 case "message-inserted.weavy":
@@ -26,6 +30,7 @@ const ConversationList = (conversationProps) => {
         });
     }, [proxy])
 
+<<<<<<< HEAD
     // Message received handler
     const messageReceived = (data) => {
 
@@ -39,6 +44,18 @@ const ConversationList = (conversationProps) => {
             conversation.is_read = false;
 
             // update the conversation list
+=======
+    
+    const messageReceived = (data) => {        
+        
+        let d = JSON.parse(data);
+        console.log("Message received in conversation list...", d)
+        let conversationId = d.conversation;
+        let c = conversationsRef.current.find((c) => { return c.id === conversationId });
+        if (c) {
+            c.last_message.text = d.text;
+            c.is_read = false;
+>>>>>>> 349bf81b7ae2485684ae092055383e003ea86825
             setConversations([...conversationsRef.current])
         }
     };
@@ -55,6 +72,7 @@ const ConversationList = (conversationProps) => {
         conversationProps.onSelectConversation(id);
         setCurrentConversation(id);
     }
+<<<<<<< HEAD
 
     // renderer for the List Item
     const ConversationItemRender = (props) => {
@@ -80,6 +98,9 @@ const ConversationList = (conversationProps) => {
             </div>
         )
     }
+=======
+  
+>>>>>>> 349bf81b7ae2485684ae092055383e003ea86825
 
     useEffect(() => {
 
@@ -100,10 +121,25 @@ const ConversationList = (conversationProps) => {
     }, []);
 
     return (
-        <ListView
-            data={conversations}
-            item={ConversationItemRender}
-        />
+       
+        <ul>
+            {conversations.map((c) => {
+                let title = (c.is_room ?? false) ? c.name : (c.members.filter((m) => { return m.id !== conversationProps.user.id })[0].name)
+                let message = c.last_message != null ? c.last_message.text.substring(0, 50) : '';
+
+                return <li  key={c.id} onClick={handleConversationClick.bind(this, c.id)} className={'list-item ' + (currentConversation === c.id ? 'selected ' : ' ') + (!c.is_read ? 'unread' : '')}>
+                    <div className="list-item-container">
+                        <Avatar shape='circle' type='image' style={{ backgroundColor: '#fff' }}>
+                            <AuthImage src={`${API_URL}${c.thumb.replace('{options}', '32')}`} />
+                        </Avatar>
+                        <div className="list-item-content">
+                            <div>{title}</div>
+                            <small>{message}</small>
+                        </div>
+                    </div>
+                </li>
+            })}
+        </ul>
     )
 };
 
