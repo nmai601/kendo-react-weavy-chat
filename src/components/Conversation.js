@@ -7,15 +7,19 @@ const Conversation = (props) => {
     const [messages, setMessages] = useState([]);
     const proxy = useContext(ConnectionContext);
     const messagesRef = useRef();
+    const conversationRef = useRef();
     messagesRef.current = messages;
+    conversationRef.current = props.conversationId
 
     useEffect(() => {
         if (!proxy) return;
+        console.log("Adding handler")
         proxy.on('eventReceived', (type, data) => {
             switch (type) {
                 case "message-inserted.weavy":
                     let json = JSON.parse(data);
-                    if (json.createdBy.id !== props.user.id) {
+                    console.log("Message received in conversation ...", json)
+                    if (json.createdBy.id !== props.user.id && conversationRef.current == json.conversation) {
                         setMessages([...messagesRef.current, {
                             text: json.text,
                             timestamp: new Date(json.createdAt),
@@ -30,9 +34,9 @@ const Conversation = (props) => {
 
     useEffect(() => {
 
-        if (!props.conversationid) return;
+        if (!props.conversationId) return;
 
-        fetch(API_URL + '/api/conversations/' + props.conversationid + '/messages', {
+        fetch(API_URL + '/api/conversations/' + props.conversationId + '/messages', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -49,12 +53,12 @@ const Conversation = (props) => {
                     }
                 }));
             });
-    }, [props.conversationid]);
+    }, [props.conversationId]);
 
     const addNewMessage = (event) => {
         setMessages([...messages, event.message]);
         let json = JSON.stringify({ text: event.message.text });
-        fetch(API_URL + '/api/conversations/' + props.conversationid + '/messages', {
+        fetch(API_URL + '/api/conversations/' + props.conversationId + '/messages', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

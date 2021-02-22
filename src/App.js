@@ -42,7 +42,7 @@ const App = () => {
             <ConversationList onSelectConversation={setCurrentConversation} user={user} />
           </div>
           <div className="col">
-            <Conversation conversationid={currentConversation} user={user} />
+            <Conversation conversationId={currentConversation} user={user} />
           </div>
         </div>
       </div>

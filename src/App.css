@@ -17,13 +17,26 @@ body {
     padding: 5px;
   }
 
-  .conversation-list-item .col-1{
-    
-    padding: 5px;
+  .list-item{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
   }
   
-  .conversation-list-item.selected{
+  .list-item.selected{
     background-color: #ccc;
+  }
+
+  .list-item-container{
+    display:flex;
+    padding: 10px;
+  }
+
+  .list-item-content{    
+    display: flex;    
+    flex-direction: column;
+    margin-left: 10px;
   }
   
   .unread{
