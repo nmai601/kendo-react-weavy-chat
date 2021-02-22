@@ -14,12 +14,8 @@ const ConversationList = (conversationProps) => {
     useEffect(() => {
         
         if (!proxy) return;
-<<<<<<< HEAD
 
         // add event handler for message inserted. Triggered from server when a new message is added to one of the users conversations
-=======
-    
->>>>>>> 349bf81b7ae2485684ae092055383e003ea86825
         proxy.on('eventReceived', (type, data) => {
             switch (type) {
                 case "message-inserted.weavy":
@@ -30,7 +26,6 @@ const ConversationList = (conversationProps) => {
         });
     }, [proxy])
 
-<<<<<<< HEAD
     // Message received handler
     const messageReceived = (data) => {
 
@@ -44,18 +39,6 @@ const ConversationList = (conversationProps) => {
             conversation.is_read = false;
 
             // update the conversation list
-=======
-    
-    const messageReceived = (data) => {        
-        
-        let d = JSON.parse(data);
-        console.log("Message received in conversation list...", d)
-        let conversationId = d.conversation;
-        let c = conversationsRef.current.find((c) => { return c.id === conversationId });
-        if (c) {
-            c.last_message.text = d.text;
-            c.is_read = false;
->>>>>>> 349bf81b7ae2485684ae092055383e003ea86825
             setConversations([...conversationsRef.current])
         }
     };
@@ -69,38 +52,10 @@ const ConversationList = (conversationProps) => {
 
     // conversation click handler
     const handleConversationClick = (id) => {
+        console.log(id)
         conversationProps.onSelectConversation(id);
         setCurrentConversation(id);
     }
-<<<<<<< HEAD
-
-    // renderer for the List Item
-    const ConversationItemRender = (props) => {
-        let conversation = props.dataItem;
-        let title = (conversation.is_room ?? false) ? conversation.name : (conversation.members.filter((m) => { return m.id !== conversationProps.user.id })[0].name)
-        let message = conversation.last_message != null ? conversation.last_message.text.substring(0, 50) : '';
-
-        return (
-            <div className={'row conversation-list-item ' + (currentConversation === conversation.id ? 'selected ' : ' ') + (!conversation.is_read ? 'unread' : '')} style={{ margin: 0 }} onClick={handleConversationClick.bind(this, conversation.id)}>
-                <div className="col-1">
-                    <Avatar shape='circle' type='image'>
-                        <AuthImage src={`${API_URL}${conversation.thumb.replace('{options}', '92')}`} />
-                    </Avatar>
-                </div>
-                <div className="col">
-                    <div>
-                        {title}
-                    </div>
-                    <div>
-                        <small>{message}</small>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-=======
-  
->>>>>>> 349bf81b7ae2485684ae092055383e003ea86825
 
     useEffect(() => {
 
@@ -130,7 +85,7 @@ const ConversationList = (conversationProps) => {
                 return <li  key={c.id} onClick={handleConversationClick.bind(this, c.id)} className={'list-item ' + (currentConversation === c.id ? 'selected ' : ' ') + (!c.is_read ? 'unread' : '')}>
                     <div className="list-item-container">
                         <Avatar shape='circle' type='image' style={{ backgroundColor: '#fff' }}>
-                            <AuthImage src={`${API_URL}${c.thumb.replace('{options}', '32')}`} />
+                            <AuthImage src={`${API_URL}${c.thumb.replace('{options}', '34')}`} />
                         </Avatar>
                         <div className="list-item-content">
                             <div>{title}</div>
