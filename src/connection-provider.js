@@ -1,29 +1,29 @@
-import {ConnectionContext} from './connection-context';
+import ConnectionContext from './connection-context';
 import { hubConnection } from 'signalr-no-jquery';
-import {useState, useEffect} from 'react';
+import { useState } from 'react';
 import { API_URL } from './constants';
-const ConnectionProvider = (props) => {
 
+const ConnectionProvider = (props) => {
     const [proxy, setProxy] = useState(null);
 
-    useEffect(() => {
-        
+    const connect = () => {
         const connection = hubConnection(API_URL);
         const hubProxy = connection.createHubProxy('rtm');
+        hubProxy.on('init', (type, data) => { }); // dummy event to get signalR started...
         setProxy(hubProxy);
-        hubProxy.on('init', (type, data) => {}); // dummy event to get signalR started...
 
         if (connection) {
             connection.start();
         }
-    }, []);
-
+    }
 
     return (
-        <ConnectionContext.Provider value={proxy}>
+        <ConnectionContext.Provider value={{
+            proxy,
+            connect
+        }}>
             {props.children}
         </ConnectionContext.Provider>
-
     );
 }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { Avatar } from '@progress/kendo-react-layout';
-import UserContext from "../UserContext";
+import UserContext from "../user-context";
 import ConnectionContext from '../connection-context';
 import { API_URL } from '../constants';
 
@@ -21,6 +21,7 @@ const ConversationList = (conversationProps) => {
         proxy.on('eventReceived', (type, data) => {
             switch (type) {
                 case "message-inserted.weavy":
+                    
                     messageReceived(data);
                     break;
                 default:
@@ -33,9 +34,11 @@ const ConversationList = (conversationProps) => {
 
         // get message from realtime data
         let message = JSON.parse(data);  
+        
         // try to get conversation from the current list      
-        let conversation = conversationsRef.current.find((c) => { return c.id === message.conversationId });
+        let conversation = conversationsRef.current.find((c) => { return c.id === message.conversation });
         if (conversation) {
+            
             // update the last message and read status
             conversation.last_message.text = message.text;
             conversation.is_read = false;

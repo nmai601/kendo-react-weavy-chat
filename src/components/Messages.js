@@ -2,25 +2,24 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Chat } from '@progress/kendo-react-conversational-ui';
 import { API_URL } from '../constants';
 import ConnectionContext from '../connection-context';
-import UserContext from '../UserContext'
+import UserContext from '../user-context'
 
-const Conversation = (props) => {
+const Messages = (props) => {
     const [messages, setMessages] = useState([]);
-    const {proxy} = useContext(ConnectionContext);
+    const { proxy } = useContext(ConnectionContext);
     const { user } = useContext(UserContext);
     const messagesRef = useRef();
     const conversationRef = useRef();
     messagesRef.current = messages;
     conversationRef.current = props.conversationId
-
+    
     useEffect(() => {
-
         if (!proxy) return;
 
-         // add event handler for message inserted. Triggered from server when a new message is added to one of the users conversations
-        proxy.on('eventReceived', (type, data) => {            
+        // add event handler for message inserted. Triggered from server when a new message is added to one of the users conversations
+        proxy.on('eventReceived', (type, data) => {
             switch (type) {
-                
+
                 case "message-inserted.weavy":
                     let message = JSON.parse(data);
                     if (message.createdBy.id !== user.id) {
@@ -36,7 +35,7 @@ const Conversation = (props) => {
                 default:
             }
         });
-    }, [proxy])
+    }, [proxy, user.id])
 
     useEffect(() => {
 
@@ -47,7 +46,7 @@ const Conversation = (props) => {
             method: 'GET',
             credentials: 'include',
             headers: {
-                'Accept': 'application/json'                
+                'Accept': 'application/json'
             }
         })
             .then(res => res.json())
@@ -66,15 +65,15 @@ const Conversation = (props) => {
     const addNewMessage = (event) => {
         // add message
         setMessages([...messages, event.message]);
-        
+
         // create new message model
         let json = JSON.stringify({ text: event.message.text });
         fetch(API_URL + '/api/conversations/' + props.conversationId + '/messages', {
             method: 'POST',
-            credentials: 'include',        
+            credentials: 'include',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'                
+                'Content-Type': 'application/json'
             },
             body: json
         });
@@ -92,4 +91,4 @@ const Conversation = (props) => {
     );
 }
 
-export default Conversation;
+export default Messages;
