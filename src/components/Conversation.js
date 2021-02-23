@@ -1,25 +1,29 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Chat } from '@progress/kendo-react-conversational-ui';
-import { API_URL, API_TOKEN } from '../constants';
-import { ConnectionContext } from '../connection-context';
+import { API_URL } from '../constants';
+import ConnectionContext from '../connection-context';
+import UserContext from '../UserContext'
 
 const Conversation = (props) => {
     const [messages, setMessages] = useState([]);
-    const proxy = useContext(ConnectionContext);
+    const {proxy} = useContext(ConnectionContext);
+    const { user } = useContext(UserContext);
     const messagesRef = useRef();
     const conversationRef = useRef();
     messagesRef.current = messages;
     conversationRef.current = props.conversationId
 
     useEffect(() => {
+
         if (!proxy) return;
 
          // add event handler for message inserted. Triggered from server when a new message is added to one of the users conversations
-        proxy.on('eventReceived', (type, data) => {
+        proxy.on('eventReceived', (type, data) => {            
             switch (type) {
+                
                 case "message-inserted.weavy":
                     let message = JSON.parse(data);
-                    if (message.createdBy.id !== props.user.id) {
+                    if (message.createdBy.id !== user.id) {
 
                         // add incoming message to messages list
                         setMessages([...messagesRef.current, {
@@ -41,14 +45,14 @@ const Conversation = (props) => {
         // get the messages for the current conversation
         fetch(API_URL + '/api/conversations/' + props.conversationId + '/messages', {
             method: 'GET',
+            credentials: 'include',
             headers: {
-                'Accept': 'application/json',
-                'Authorization': 'Bearer ' + API_TOKEN
+                'Accept': 'application/json'                
             }
         })
             .then(res => res.json())
             .then((r) => {
-                setMessages(r.data.map((m) => {
+                setMessages(r.data?.map((m) => {
                     return {
                         text: m.text,
                         timestamp: new Date(m.created_at),
@@ -67,10 +71,10 @@ const Conversation = (props) => {
         let json = JSON.stringify({ text: event.message.text });
         fetch(API_URL + '/api/conversations/' + props.conversationId + '/messages', {
             method: 'POST',
+            credentials: 'include',        
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + API_TOKEN
+                'Content-Type': 'application/json'                
             },
             body: json
         });
@@ -79,7 +83,7 @@ const Conversation = (props) => {
     return (
         <div>
             <Chat
-                user={props.user}
+                user={user}
                 placeholder="Type a message..."
                 messages={messages}
                 onMessageSend={addNewMessage}

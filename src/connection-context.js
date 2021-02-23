@@ -1,7 +1,10 @@
 import React from 'react';
 
-export const ConnectionContext = React.createContext(
+const ConnectionContext = React.createContext(
     {
+        connect: () => null,
         proxy: null
     }
 );
+
+export default ConnectionContext
